@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0edc53e07d7976141b149430d0603bea
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - diamondPrefab: {fileID: 6586298951524360403, guid: e1c8fcc98159a9843b8f6a040ad78c88,
+      type: 3}
+  - dynamiteUIText: {instanceID: 0}
+  - diamondUIText: {instanceID: 0}
+  - diamondUIIcon: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
