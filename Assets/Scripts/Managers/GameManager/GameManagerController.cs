@@ -27,7 +27,7 @@ namespace ExplosiveMiner.Managers
         {
             _model = new GameManagerModel(10, 0, 50.0f, 3, 3, 3);
             _saveFilePath = Application.persistentDataPath + "/" + SaveFileName + ".json";
-            _configFilePath = Application.persistentDataPath + "/" + ConfigFileName + ".json";
+            _configFilePath = Application.dataPath + "/" + ConfigFileName + ".json";
         }
 
         public void StartGame()
