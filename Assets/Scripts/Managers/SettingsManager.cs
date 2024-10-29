@@ -1,15 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Newtonsoft.Json;
 
 namespace ExplosiveMiner.Managers
 {
     public class SettingsManager : MonoBehaviour
     {
-        private const string SettingsFileName = "settings";
-        private string _settingsFilePath;
-
         [Header("UI")]
         [SerializeField] private Dropdown _resolutionDropdown;
         [SerializeField] private Toggle _fullscreenToggle;
@@ -20,8 +16,6 @@ namespace ExplosiveMiner.Managers
         
         private void Start()
         {
-            _settingsFilePath = Application.persistentDataPath + "/" + SettingsFileName +".json";
-
             InitializeResolutionDropdown();
             LoadData(_currentResolutionIndex);          
         }
@@ -97,9 +91,7 @@ namespace ExplosiveMiner.Managers
             try
             {
                 Serialization.GameSettings settingsFileData = new Serialization.GameSettings(_resolutionDropdown.value, Screen.fullScreen, _qualityDropdown.value);
-                string jsonData = JsonConvert.SerializeObject(settingsFileData, Formatting.Indented);
-                System.IO.File.WriteAllText(_settingsFilePath, jsonData);
-                Debug.Log("Settings saved in the path: " + _settingsFilePath);
+                Serialization.GameSettings.SaveData(settingsFileData);
             }
             catch (System.Exception ex)
             {
@@ -111,32 +103,25 @@ namespace ExplosiveMiner.Managers
         {
             try
             {
-                if (System.IO.File.Exists(_settingsFilePath))
-                {
-                    string jsonData = System.IO.File.ReadAllText(_settingsFilePath);
-                    Serialization.GameSettings settingsFileData = JsonConvert.DeserializeObject<Serialization.GameSettings>(jsonData);
+                Serialization.GameSettings settingsFileData = Serialization.GameSettings.LoadData();
 
-                    _resolutionDropdown.value = settingsFileData.resolutionPreference;
-                    _qualityDropdown.value = settingsFileData.qualitySettingPreference;
+                _resolutionDropdown.value = settingsFileData.resolutionPreference;
+                _qualityDropdown.value = settingsFileData.qualitySettingPreference;
 
-                    SetFullscreen(_fullscreenToggle.isOn);
-                    ApplyResolution();
-                    ApplyQuality();
+                ApplyResolution();
+                ApplyQuality();
 
-                    Debug.Log("The settings has been successfully uploaded.");
-                }
-                else
-                {
-                    _resolutionDropdown.value = currentResolutionIndex;
-                    _qualityDropdown.value = 3;
-                }
-
-                _fullscreenToggle.isOn = Screen.fullScreen;
+                Debug.Log("The settings has been successfully uploaded.");
             }
             catch (System.Exception ex)
             {
                 Debug.LogWarning("Error while loading settings: " + ex.Message);
+
+                _resolutionDropdown.value = currentResolutionIndex;
+                _qualityDropdown.value = 3;
             }
+
+            _fullscreenToggle.isOn = Screen.fullScreen;
         }
 
         private void OnApplicationQuit()
