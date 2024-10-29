@@ -8,7 +8,6 @@ namespace ExplosiveMiner.Managers
     [RequireComponent(typeof(GameManagerView))]
     public class GameManagerController : MonoBehaviour
     {
-        private const string SaveFileName = "save";
         private const string ConfigFileName = "config";
 
         [Header("Prefabs")]
@@ -26,7 +25,6 @@ namespace ExplosiveMiner.Managers
         private void Start()
         {
             _model = new GameManagerModel(10, 0, 50.0f, 3, 3, 3);
-            _saveFilePath = Application.persistentDataPath + "/" + SaveFileName + ".json";
             _configFilePath = Application.dataPath + "/" + ConfigFileName + ".json";
         }
 
@@ -173,9 +171,7 @@ namespace ExplosiveMiner.Managers
                 try
                 {
                     Serialization.GameData saveFileData = new Serialization.GameData(_model.DiamondCount, _model.ShovelCount, _model.DirtStateMatrix);
-                    string jsonData = JsonConvert.SerializeObject(saveFileData, Formatting.Indented);
-                    System.IO.File.WriteAllText(_saveFilePath, jsonData);
-                    Debug.Log("Data saved in the path: " + _saveFilePath);
+                    Serialization.GameData.SaveData(saveFileData);
                 }
                 catch (System.Exception ex)
                 {
@@ -188,19 +184,16 @@ namespace ExplosiveMiner.Managers
         {
             try
             {
-                if (System.IO.File.Exists(_saveFilePath))
-                {
-                    string jsonData = System.IO.File.ReadAllText(_saveFilePath);
-                    Serialization.GameData saveFileData = JsonConvert.DeserializeObject<Serialization.GameData>(jsonData);
+                Serialization.GameData saveFileData = Serialization.GameData.LoadData();
 
-                    _model.DiamondCount = saveFileData.diamondCount;
-                    _model.ShovelCount = saveFileData.shovelCount;
-                    _model.DirtStateMatrix = saveFileData.dirtStateMatrix;
+                _model.DiamondCount = saveFileData.diamondCount;
+                _model.ShovelCount = saveFileData.shovelCount;
+                _model.DirtStateMatrix = saveFileData.dirtStateMatrix;
 
-                    LoadMatrixState();
+                LoadMatrixState();
 
-                    Debug.Log("The data has been successfully uploaded.");
-                }
+                Debug.Log("The data has been successfully uploaded.");
+                
             }
             catch (System.Exception ex)
             {
