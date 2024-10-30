@@ -91,7 +91,7 @@ namespace ExplosiveMiner.Managers
             try
             {
                 Serialization.GameSettings settingsFileData = new Serialization.GameSettings(_resolutionDropdown.value, Screen.fullScreen, _qualityDropdown.value);
-                Serialization.GameSettings.SaveData(settingsFileData);
+                settingsFileData.SaveData();
             }
             catch (System.Exception ex)
             {
@@ -103,7 +103,8 @@ namespace ExplosiveMiner.Managers
         {
             try
             {
-                Serialization.GameSettings settingsFileData = Serialization.GameSettings.LoadData();
+                Serialization.GameSettings settingsFileData = new Serialization.GameSettings();
+                settingsFileData = Serialization.GameSettings.LoadData(settingsFileData.FilePath);
 
                 _resolutionDropdown.value = settingsFileData.resolutionPreference;
                 _qualityDropdown.value = settingsFileData.qualitySettingPreference;

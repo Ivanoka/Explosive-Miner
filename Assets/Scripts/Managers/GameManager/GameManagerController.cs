@@ -166,7 +166,7 @@ namespace ExplosiveMiner.Managers
                 try
                 {
                     Serialization.GameData saveFileData = new Serialization.GameData(_model.DiamondCount, _model.ShovelCount, _model.DirtStateMatrix);
-                    Serialization.GameData.SaveData(saveFileData);
+                    saveFileData.SaveData();
                 }
                 catch (System.Exception ex)
                 {
@@ -179,7 +179,8 @@ namespace ExplosiveMiner.Managers
         {
             try
             {
-                Serialization.GameData saveFileData = Serialization.GameData.LoadData();
+                Serialization.GameData saveFileData = new Serialization.GameData();
+                saveFileData = Serialization.GameData.LoadData(saveFileData.FilePath);
 
                 _model.DiamondCount = saveFileData.diamondCount;
                 _model.ShovelCount = saveFileData.shovelCount;
@@ -200,7 +201,8 @@ namespace ExplosiveMiner.Managers
         {
             try
             {
-                Serialization.GameConfig configFileData = Serialization.GameConfig.LoadData();
+                Serialization.GameConfig configFileData = new Serialization.GameConfig();
+                configFileData = Serialization.GameConfig.LoadData(configFileData.FilePath);
 
                 _model.MatrixWidth = configFileData.matrixWidth;
                 _model.MatrixHeight = configFileData.matrixHeight;
@@ -215,7 +217,7 @@ namespace ExplosiveMiner.Managers
                 Debug.LogWarning("Error while loading config: " + ex.Message);
 
                 Serialization.GameConfig configFileData = new Serialization.GameConfig(_model.MatrixWidth, _model.MatrixHeight, _model.MatrixDepth, _model.StartShovelCount, _model.DiamondSpawnRate);
-                Serialization.GameConfig.SaveData(configFileData);
+                configFileData.SaveData();
             }
         }
 
