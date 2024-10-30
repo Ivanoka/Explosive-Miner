@@ -44,10 +44,8 @@ namespace ExplosiveMiner.Serialization
                     string jsonData = File.ReadAllText(_filePath);
                     return JsonConvert.DeserializeObject<GameSettings>(jsonData);
                 }
-                else
-                {
-                    throw new IOException("The file does not exist");
-                }
+                
+                throw new IOException("The file does not exist");
             }
             catch (Exception ex)
             {
