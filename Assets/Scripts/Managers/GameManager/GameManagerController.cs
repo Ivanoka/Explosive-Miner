@@ -8,16 +8,12 @@ namespace ExplosiveMiner.Managers
     [RequireComponent(typeof(GameManagerView))]
     public class GameManagerController : MonoBehaviour
     {
-        private const string ConfigFileName = "config";
-
         [Header("Prefabs")]
         [SerializeField] private GameObject dirtPrefab;
         [Inject] private DiContainer diContainer;
 
         private GameManagerModel _model;
         [Inject] private GameManagerView _view;
-        private string _saveFilePath;
-        private string _configFilePath;
         public bool CanGameInteract { get; private set; }
         private List<GameObject> _dirtMatrix = new List<GameObject>();
         [HideInInspector] public List<GameObject> diamondObjects = new List<GameObject>();
@@ -25,7 +21,6 @@ namespace ExplosiveMiner.Managers
         private void Start()
         {
             _model = new GameManagerModel(10, 0, 50.0f, 3, 3, 3);
-            _configFilePath = Application.dataPath + "/" + ConfigFileName + ".json";
         }
 
         public void StartGame()
@@ -205,29 +200,22 @@ namespace ExplosiveMiner.Managers
         {
             try
             {
-                if (System.IO.File.Exists(_configFilePath))
-                {
-                    string jsonData = System.IO.File.ReadAllText(_configFilePath);
-                    Serialization.GameConfig configFileData = JsonConvert.DeserializeObject<Serialization.GameConfig>(jsonData);
+                Serialization.GameConfig configFileData = Serialization.GameConfig.LoadData();
 
-                    _model.MatrixWidth = configFileData.matrixWidth;
-                    _model.MatrixHeight = configFileData.matrixHeight;
-                    _model.MatrixDepth = configFileData.matrixDepth;
-                    _model.StartShovelCount = configFileData.startShovelCount;
-                    _model.DiamondSpawnRate = configFileData.diamondSpawnRate;
+                _model.MatrixWidth = configFileData.matrixWidth;
+                _model.MatrixHeight = configFileData.matrixHeight;
+                _model.MatrixDepth = configFileData.matrixDepth;
+                _model.StartShovelCount = configFileData.startShovelCount;
+                _model.DiamondSpawnRate = configFileData.diamondSpawnRate;
 
-                    Debug.Log("The config has been successfully uploaded.");
-                }
-                else
-                {
-                    Serialization.GameConfig configFileData = new Serialization.GameConfig(_model.MatrixWidth, _model.MatrixHeight, _model.MatrixDepth, _model.StartShovelCount, _model.DiamondSpawnRate);
-                    string jsonData = JsonConvert.SerializeObject(configFileData, Formatting.Indented);
-                    System.IO.File.WriteAllText(_configFilePath, jsonData);
-                }
+                Debug.Log("The config has been successfully uploaded.");
             }
             catch (System.Exception ex)
             {
                 Debug.LogWarning("Error while loading config: " + ex.Message);
+
+                Serialization.GameConfig configFileData = new Serialization.GameConfig(_model.MatrixWidth, _model.MatrixHeight, _model.MatrixDepth, _model.StartShovelCount, _model.DiamondSpawnRate);
+                Serialization.GameConfig.SaveData(configFileData);
             }
         }
 
